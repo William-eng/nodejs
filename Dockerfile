@@ -1,11 +1,20 @@
-FROM adoptopenjdk/openjdk11:alpine-jre
+# Use a base image with Node.js installed
+FROM node:14-alpine
 
-# Simply the artifact path
-ARG artifact=target/nodejs.jar
+# Set the working directory inside the container
+WORKDIR /app
 
-WORKDIR /opt/app
+# Copy package.json and package-lock.json into the container
+COPY package*.json ./
 
-COPY ${artifact} app.jar
+# Install dependencies
+RUN npm install
 
-# This should not be changed
-ENTRYPOINT ["java","-jar","app.jar"]
+# Copy the rest of the application code into the container
+COPY . .
+
+# Expose the port your app runs on
+EXPOSE 3000
+
+# Specify the command to run your application when the container starts
+CMD ["npm", "start"]
